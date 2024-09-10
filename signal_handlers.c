@@ -33,7 +33,14 @@ void handler_sigint(int sig) {
 
         if (strncmp(response, "sim", 3) == 0) {
             printf("Finalizando todos os processos...\n");
-            kill(0, SIGKILL); 
+            if (pg && pg->pgids) {
+                for (int i = 0; i < pg->qtd_groups; i++) {
+                    if (kill(-pg->pgids[i], SIGKILL) == -1) {
+                        perror("kill");
+                    }
+                }
+            }
+            exit(0);
         } else {
             printf("Continuando execução...\n"); 
         }
@@ -51,7 +58,27 @@ void handler_sigtstp(int sig) {
                 perror("kill");
             }
         }
+    }
+}
 
-        return;
+void setup_signal_handlers(){
+    //handle SIGINT
+    struct sigaction sa;
+    sa.sa_handler = handler_sigint;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    if(sigaction(SIGINT, &sa, NULL) == -1){
+        perror("sigaction");
+        exit(1);
+    }
+
+    //handle SIGTSTP
+    struct sigaction sa2;
+    sa2.sa_handler = handler_sigtstp;
+    sigemptyset(&sa2.sa_mask);
+    sa2.sa_flags = 0;
+    if (sigaction(SIGTSTP, &sa2, NULL) == -1) {
+        perror("sigaction");
+        exit(1);
     }
 }

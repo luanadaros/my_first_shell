@@ -15,5 +15,6 @@ extern ProcessGroups * pg;
 
 void handler_sigtstp(int);
 void handler_sigint(int);
+void setup_signal_handlers();
 
 #endif

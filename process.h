@@ -17,6 +17,12 @@ typedef struct process {
     int qtd_args;
 } Process;
 
+typedef struct process_vector {
+    Process ** processes;
+    int qtd_processes;
+    int qtd_alloc_processes;
+} ProcessVector;
+
 typedef struct process_group {
     int qtd_groups;
     int qtd_alloc_groups;
@@ -29,6 +35,12 @@ extern ProcessGroups * pg;
 Process * process_start(char ** args, int type);
 void process_wait(Process * p);
 void process_free(Process * p);
+
+//ProcessVector functions
+ProcessVector * processes_vector_init(int qtd_alloc_processes);
+void processes_vector_realloc(ProcessVector * processes, int qtd_alloc_processes);
+void processes_vector_free(ProcessVector * processes);
+void processes_vector_add(ProcessVector * processes, Process * p);
 
 //ProcessGroups functions
 void process_groups_init(int qtd_alloc_groups);
